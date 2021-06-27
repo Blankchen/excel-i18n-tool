@@ -4,6 +4,18 @@ main(filePath: string, savePath: string, fileType: string)
 - savePath: save folder
 - fileTypeL json | js
 
+### excel format
+$i18nKey: before this row & col can write any notes
+$i18nKey: row are locale
+$i18nKey: col are i18n key
+
+| $i18nKey| en  |  cn |
+| ------- | - --| - --|
+| test1   | en1 | cn1 |
+| test2   | en2 | cn2 |
+| test3   | en3 | cn3 |
+| test4   | en4 | cn4 |
+
 ### install
 npm install git+${git url}#branch
 ```
