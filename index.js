@@ -85,4 +85,4 @@ const main = (filePath, savePath, fileType) => {
   save(savePath,fileType, data)
 }
 
-export default main
+module.exports = main
