@@ -1,5 +1,7 @@
 # excel-i18n-tool
-
-## sheets
-same as node-xlsx xlsx.parse()
-
+```
+main(filePath: string, savePath: string, fileType: string)
+filePath: excel path
+savePath: save folder
+fileTypeL json | js
+```
