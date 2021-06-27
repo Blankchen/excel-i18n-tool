@@ -1,8 +1,8 @@
 # excel-i18n-tool
 main(filePath: string, savePath: string, fileType: string)
-filePath: excel path
-savePath: save folder
-fileTypeL json | js
+- filePath: excel path
+- savePath: save folder
+- fileTypeL json | js
 
 ### install
 npm install git+${git url}#branch
