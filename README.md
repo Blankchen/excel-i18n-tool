@@ -39,3 +39,18 @@ tool('./source.xlsx', './', 'js')
 // json format
 tool('./source.xlsx', './', 'json')
 ```
+
+### Google sheet api
+https://github.com/theoephraim/node-google-spreadsheet  
+npm i google-spreadsheet --save  
+update config.GOOGLE_API_KEY & .configsheetUrl  
+```
+const config = {
+  // ref: https://handsondataviz.org/google-sheets-api-key.html#google-sheets-api-key//
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+  sheetUrl: process.env.sheetUrl,
+  savePath: "./locales",
+  fileType: "js", // fileType: json, js
+}
+```
+ node googleSheet.js
