@@ -1,5 +1,6 @@
 require('dotenv').config()
 const fs = require("fs");
+const xlsx = require("node-xlsx");
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 const config = {
@@ -10,37 +11,27 @@ const config = {
   fileType: "js", // fileType: json, js
 }
 
-const sleep = (ms) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+const writeFile = (path, data, opts = 'utf8') => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(path, data, opts, (err) => {
+      if (err) reject(err)
+      else resolve()
+    })
+  })
 }
 
-const getSheetData = async (sheetUrl) => {
-  const delayTime = 1200
+const getSheetFile = async (sheetUrl) => {
   // https://docs.google.com/spreadsheets/d/<docID>/edit#gid=<sheetID>
   const docID = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(sheetUrl)[1]
   const doc = new GoogleSpreadsheet(docID);
   doc.useApiKey(config.GOOGLE_API_KEY);
   await doc.loadInfo(); // loads document properties and worksheets
-  console.log(doc.title);
-  const result = []
-  for (const sheet of Object.values(doc._rawSheets)) {
-    const startTime = performance.now()
-    const title = sheet._rawProperties.title
-    try {
-      const rows = await sheet.getRows()
-      console.log('sheet name', title)
-      result.push({
-        name: title.toLowerCase(),
-        data: rows.map(x => x._rawData)
-      })
-    } catch (error) {
-      console.log(error.message);
-    }
-    const leftTime = (performance.now() - startTime)
-    await sleep(leftTime > delayTime ? 0 : delayTime - leftTime)
-    // break
-  }
-  return result
+
+  const buff = await doc.downloadAsXLSX(false) 
+  const path = `${config.savePath}/${doc.title}-${new Date().toISOString().split('T')[0]}.xlsx` 
+  await writeFile(path, buff)
+  console.log('save file', path)
+  return path
 }
 
 
@@ -60,7 +51,7 @@ const parseSheet = (sheet, data) => {
     },
   };
 
-  // console.log(sheet.name);
+  console.log(sheet.name);
   const sheetName = sheet.name;
   const rows = removeEndEmpty(sheet.data);
   // key: cellIndex, value: lang code
@@ -117,12 +108,13 @@ const save = (path, fileType, data) => {
 }
 
 
-
 const main = async () => {
+  console.log('config', config)
   const { sheetUrl, savePath, fileType } = config
   // [lang]:{[sheetname]}:{[i18nkey]: value}
   const data = {}
-  const sheets = await getSheetData(sheetUrl)
+  const filePath = await getSheetFile(sheetUrl)
+  const sheets = xlsx.parse(filePath)
 
   sheets.forEach(sheet => parseSheet(sheet, data))
   // console.log(data)
